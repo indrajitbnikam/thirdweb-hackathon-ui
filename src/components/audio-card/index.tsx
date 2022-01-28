@@ -1,5 +1,6 @@
-import React from 'react';
 import Image from 'next/image';
+import React, { useRef, useState } from 'react';
+// import ColorThief from 'colorthief';
 
 export interface AudioCardProps {
   id: string;
@@ -32,8 +33,10 @@ export const AudioCard = (props: AudioCardProps) => {
     return `owned : ${balance}`;
   };
 
+  const [cardBgColor, setCardBgColor] = useState()
+
   return (
-    <div className='block bg-white rounded-lg shadow-md hover:shadow-xl'>
+    <div className='block bg-white rounded-lg shadow-md hover:shadow-xl' style={{ backgroundColor: cardBgColor }}>
       <div className='rounded-t-lg aspect-square'>
         <Image
           src={image}
@@ -42,6 +45,14 @@ export const AudioCard = (props: AudioCardProps) => {
           height={'100%'}
           layout='responsive'
           className='rounded-t-lg'
+          // onLoad={(e) => {
+            // const colorThief = new ColorThief();
+            // const result = colorThief.getColor(e.target, 25);
+            // const paletteResp = colorThief.getPalette(e.target, 25)[2];
+            // setCardBgColor(`rgba(${paletteResp[0]}, ${paletteResp[1]}, ${paletteResp[2]}, 0.5)`);
+            // console.log("result : ", result);
+            // console.log("paletteResp : ", paletteResp);
+          // }}
         />
       </div>
       <div className='flex flex-row justify-between px-4 pt-4 '>

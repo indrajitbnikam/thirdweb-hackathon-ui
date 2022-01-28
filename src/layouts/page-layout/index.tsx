@@ -7,6 +7,7 @@ import Header from '../../components/header';
 import Modal from '../../components/modal';
 import { isOnSupportedChain } from '../../helpers/web3';
 import { AudioPlayerContext } from '../../providers/audio-player';
+import CustomAudioPlayer from '../../components/audio-player';
 
 const PageLayout = ({ children }: any) => {
   const [readyToCheck, setReadyToCheck] = useState(false);
@@ -14,8 +15,6 @@ const PageLayout = ({ children }: any) => {
 
   const {
     isVisible = true,
-    setIsVisible,
-    audiobookData,
   } = useContext<any>(AudioPlayerContext);
 
   useEffect(() => {
@@ -60,19 +59,7 @@ const PageLayout = ({ children }: any) => {
         leaveFrom='opacity-100'
         leaveTo='opacity-0'
       >
-        <div className='fixed bottom-0 flex items-center w-full h-24 bg-white border-t'>
-          <div className='flex items-center flex-grow px-4'>
-            <ReactAudioPlayer
-              src={audiobookData.fileUrl}
-              controls
-              autoPlay
-              className='flex-grow mr-4'
-            />
-            <Button variant='primary' onClick={() => setIsVisible(false)}>
-              Close
-            </Button>
-          </div>
-        </div>
+        <CustomAudioPlayer />
       </Transition>
       {/* )} */}
 
