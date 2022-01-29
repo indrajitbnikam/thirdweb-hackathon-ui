@@ -1,5 +1,4 @@
 import { Transition } from '@headlessui/react';
-import { useEthers } from '@usedapp/core';
 import React, { useContext, useEffect, useState } from 'react';
 import ReactAudioPlayer from 'react-audio-player';
 import Button from '../../components/button';
@@ -9,21 +8,23 @@ import { isOnSupportedChain } from '../../helpers/web3';
 import { AudioPlayerContext } from '../../providers/audio-player';
 import CustomAudioPlayer from '../../components/audio-player';
 
+import { useWeb3 } from '@3rdweb/hooks';
+
 const PageLayout = ({ children }: any) => {
   const [readyToCheck, setReadyToCheck] = useState(false);
-  const { chainId, library } = useEthers();
+  const { chainId, provider } = useWeb3();
 
   const {
     isVisible = true,
   } = useContext<any>(AudioPlayerContext);
 
   useEffect(() => {
-    setTimeout(() => setReadyToCheck(true), 1000);
+    setTimeout(() => setReadyToCheck(true), 2000);
   }, []);
 
   const renderWarning = () => {
     // readyToCheck is being used to wait for metamask provider to load. Before metamask, infura provider loads which does not help.
-    if (readyToCheck && !library?.provider.isMetaMask) {
+    if (readyToCheck && !provider) {
       return (
         <Modal
           title='Warning!'
@@ -32,7 +33,7 @@ const PageLayout = ({ children }: any) => {
       );
     }
 
-    if (!isOnSupportedChain(chainId as number)) {
+    if (readyToCheck && !isOnSupportedChain(chainId as number)) {
       return (
         <Modal
           title='Warning!'
@@ -49,7 +50,6 @@ const PageLayout = ({ children }: any) => {
       <Header />
       {children}
 
-      {/* {isVisible && ( */}
       <Transition
         show={isVisible}
         enter='transition-opacity duration-1000'
@@ -61,9 +61,8 @@ const PageLayout = ({ children }: any) => {
       >
         <CustomAudioPlayer />
       </Transition>
-      {/* )} */}
 
-      {renderWarning()}
+      {provider !== undefined && renderWarning()}
     </div>
   );
 };

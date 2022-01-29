@@ -1,33 +1,40 @@
 import type { AppProps } from 'next/app';
 
 import '../styles/globals.scss';
-import { Config, DAppProvider, Rinkeby } from '@usedapp/core';
 import { AudioPlayerProvider } from '../src/providers/audio-player';
 import PageLayout from '../src/layouts/page-layout';
 import { ThemeProvider } from 'next-themes';
 import { AppWeb3Provider } from '../src/providers/app-web3';
+import { ThirdwebProvider } from '@3rdweb/react';
+import { NextPage } from 'next';
+import { ReactElement, ReactNode } from 'react';
 
-const config: Config = {
-  readOnlyChainId: Rinkeby.chainId,
-  readOnlyUrls: {
-    [Rinkeby.chainId]:
-      'https://rinkeby.infura.io/v3/29dfbac4270f4a82bfd647121ca2df13',
-  },
+type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactElement) => ReactNode;
 };
 
-function MyApp({ Component, pageProps }: AppProps) {
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
+
+function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+  const getLayout = Component.getLayout ?? ((page) => page);
+
   return (
-    <DAppProvider config={config}>
+    <ThirdwebProvider
+      supportedChainIds={[4]}
+      connectors={{
+        injected: {},
+      }}
+    >
       <AppWeb3Provider>
         <AudioPlayerProvider>
-          <ThemeProvider attribute="class" defaultTheme="light">
-            <PageLayout>
-              <Component {...pageProps} />
-            </PageLayout>
+          <ThemeProvider attribute='class' defaultTheme='light'>
+            {getLayout(<Component {...pageProps} />)}
           </ThemeProvider>
         </AudioPlayerProvider>
       </AppWeb3Provider>
-    </DAppProvider>
+    </ThirdwebProvider>
   );
 }
 
